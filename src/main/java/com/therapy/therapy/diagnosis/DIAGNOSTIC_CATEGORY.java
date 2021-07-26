@@ -1,0 +1,30 @@
+package com.therapy.therapy.diagnosis;
+
+public enum DIAGNOSTIC_CATEGORY {
+    Ungroupable,
+    Nervous_System,
+    Eye,
+    Ear_Nose_Mouth_And_Throat,
+    Respiratory_System,
+    Circulatory_System,
+    Digestive_System,
+    Hepatobiliary_System_and_Pancreas,
+    Musculoskeletal_System_and_Connective_Tissue,
+    Skin_Subcutaneous_Tissue_and_Breast,
+    Endocrine_Nutritional_and_Metabolic_System,
+    Kidney_and_Urinary_Tract,
+    Male_Reproductive_System,
+    Female_Reproductive_System,
+    Pregnancy_Childbirth_and_Puerperium,
+    Newborn_and_Other_Neonates,
+    Blood_and_Blood_Forming_Organs_and_Immunological_Disorders,
+    Myeloproliferative_Diseases_and_Disorders,
+    Infectious_and_Parasitic_Diseases_and_Disorders,
+    Mental_Diseases_and_Disorders ,
+    Alcohol_Drug_Use_or_Induced_Mental_Disorders,
+    Injuries_Poison_and_Toxic_Effect_of_Drugs,
+    Burns,
+    Factors_Influencing_Health_Status,
+    Multiple_Significant_Trauma,
+    Human_Immunodeficiency_Virus
+}

@@ -1,0 +1,52 @@
+plugins {
+	id 'org.springframework.boot' version '2.4.5'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'java'
+}
+//apply plugin: 'war'
+group = 'com.therapy'
+version = '0.0.1-SNAPSHOT'
+//sourceCompatibility = '11'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-data-rest'
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+
+
+	implementation "io.jsonwebtoken:jjwt-api:0.11.2"
+	implementation "io.jsonwebtoken:jjwt-impl:0.11.2"
+	implementation "io.jsonwebtoken:jjwt-jackson:0.11.2"
+
+	implementation "io.springfox:springfox-boot-starter:3.0.0"
+	implementation 'io.springfox:springfox-swagger-ui:3.0.0'
+
+	compileOnly 'org.projectlombok:lombok'
+	runtimeOnly 'org.postgresql:postgresql'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	annotationProcessor group: 'org.springframework.boot', name: 'spring-boot-configuration-processor'
+}
+
+test {
+	useJUnitPlatform()
+}
+/*
+bootJar {
+	baseName = 'therapy'
+	version =  '1.0.0'
+}*/
