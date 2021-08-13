@@ -4,8 +4,7 @@ import com.therapy.therapy.common.ActionResponse;
 import com.therapy.therapy.common.ORDER_STATUS;
 import com.therapy.therapy.configuration.Constants;
 import com.therapy.therapy.examination.labOrder.*;
-import com.therapy.therapy.examination.patientHealthProblem.HealthProblemService;
-import com.therapy.therapy.icd.IcdService;
+import com.therapy.therapy.icdCode.IcdService;
 import com.therapy.therapy.laboratory.Laboratory;
 import com.therapy.therapy.laboratory.LaboratoryService;
 import com.therapy.therapy.patient.checkup.PatientVisit;
@@ -33,8 +32,6 @@ import java.util.stream.Collectors;
 public class ExaminationController {
 
 
-    private final HealthProblemService patientHealthProblemService;
-
 
     @Autowired
     private SecurityService securityService;
@@ -58,11 +55,47 @@ public class ExaminationController {
     @Autowired
     private IcdService iCdService;
 
-    public ExaminationController(HealthProblemService healthProblemService){
-        this.patientHealthProblemService =healthProblemService;
+
+    // due to unexpected and unsolved securitservice null problem, removed to this end point
+    @PostMapping("/addExamination")
+    @PreAuthorize("hasAnyAuthority('ADMIN','EXAMINER','MEDICAL','NURSE')")
+    public ActionResponse<ExaminationDTO> addExamination(@RequestBody ExaminationCreateDTO dto) {
+
+        Staff staff =staffService.getByStaffId(securityService.getStaffId());
+
+        ActionResponse<ExaminationDTO> response= new ActionResponse<>();
+        response.setResult(false);
+
+        if(staff==null){
+            throw new IllegalArgumentException("Unknown Staff");
+
+        }
+
+        PatientVisit visit =patientVisitService.get(dto.getPatientVisitId());
+
+        if(visit==null){
+            response.setMessage("Unknown Checkups");
+        }
+        else {
+            Examination examination =ExaminationCreateDTO.toExamination(dto,visit,staff);
+            ActionResponse<Examination> result =examinationService.create(examination,dto.getLaboratoryCreates());
+
+            response.setMessage(result.getMessage());
+            response.setResult(result.getResult());
+
+            if(result.getResult()) {
+                List<LabOrderDTO> labOrders =labService.getByExamination((Examination)response.getT())
+                        .stream()
+                        .map(t->LabOrderDTO.toDTO(t,null)).collect(Collectors.toList());
+                if (result.getT() != null) {
+                    response.setT(ExaminationDTO.toDetail((Examination) result.getT(), labOrders));
+                }
+            }
+        }
+
+        return response;
+
     }
-
-
 
     @GetMapping("/{id}")
     public ExaminationDTO get(@PathVariable("id")Long id){
@@ -110,39 +143,7 @@ public class ExaminationController {
         return ExaminationDTO.toDTOLab(examination,labService.getByExamination(examination));
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN','EXAMINER')")
-    @PostMapping("/add")
-    private ActionResponse<ExaminationDTO> addExamination(@RequestBody ExaminationCreateDTO dto) throws IllegalAccessException{
-        String staffId =securityService.getStaffId();
 
-        Staff staff =staffService.getByStaffId(staffId);
-
-        ActionResponse<ExaminationDTO> response= new ActionResponse<>();
-        response.setResult(false);
-
-        if(staff==null){
-           throw new IllegalArgumentException("Unknown Staff");
-
-        }
-
-        PatientVisit visit =patientVisitService.get(dto.getPatientVisitId());
-
-         if(visit==null){
-            response.setMessage("Unknown Checkups");
-        }
-        else {
-            Examination examination =ExaminationCreateDTO.toExamination(dto,visit,staff);
-            ActionResponse<Examination> result =examinationService.create(examination,dto.getLaboratoryCreates());
-
-            response.setMessage(result.getMessage());
-            response.setResult(result.getResult());
-            if(response.getT()!=null)
-                response.setT(ExaminationDTO.toDTOLab((Examination)result.getT(),labService.getByExamination((Examination)result.getT())));
-        }
-
-        return response;
-
-    }
     @PreAuthorize("hasAnyAuthority('ADMIN','EXAMINER','NURSE','CARD')")
     @GetMapping("/list")
     public Page<ExaminationDTO> list(@RequestParam("pageNumber")int pageNumber){

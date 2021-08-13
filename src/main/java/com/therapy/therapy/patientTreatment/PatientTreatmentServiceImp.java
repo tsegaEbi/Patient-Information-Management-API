@@ -30,10 +30,12 @@ public class PatientTreatmentServiceImp implements PatientTreatmentService{
         return null;
     }
 
+
     @Override
     public PatientTreatment add(PatientTreatment patientTreatment) throws Exception {
         return null;
     }
+
 
     @Override
     @Transactional
@@ -42,7 +44,10 @@ public class PatientTreatmentServiceImp implements PatientTreatmentService{
     }
 
     @Override
+    @Transactional
     public void delete(PatientTreatment patientTreatment) throws Exception {
+
+            repository.delete(patientTreatment);
 
     }
 
@@ -55,7 +60,7 @@ public class PatientTreatmentServiceImp implements PatientTreatmentService{
           PatientTreatment tr =treatments.stream().filter(t->t.getResult().equals(PATIENT_TREATMENT_RESULT.IN_PROGRESS)).findFirst().orElse(null);
 
           if(tr!=null) {
-              response.setMessage("Previous treatment for the Checkup is on progress");
+              response.setMessage("Previous treatment for the Checkup is in progress");
               response.setResult(false);
               return response;
           }
@@ -137,5 +142,29 @@ public class PatientTreatmentServiceImp implements PatientTreatmentService{
     public Page<PatientTreatment> getAllByExaminerAndStatus(Long staffId, PATIENT_TREATMENT_RESULT result) {
         Pageable pageable= PageRequest.of(0,Constants.PAGE_FOR_ALL);
         return repository.searchByExaminerAndStatus(staffId,result,pageable);
+    }
+
+    @Override
+    @Transactional
+    public ActionResponse<PatientTreatment> createMultiple(List<PatientTreatment> treatments) {
+        ActionResponse<PatientTreatment> result =new ActionResponse<>();
+        result.setMessage(" ");
+
+        if(treatments!=null){
+            ActionResponse<PatientTreatment> createResponse =new ActionResponse<>();
+            Boolean totalResult =true;
+
+            for(PatientTreatment tr:treatments){
+                  createResponse= create(tr);
+                  if(!createResponse.getResult()){
+                      result.setMessage(result.getMessage()+","+createResponse.getMessage());
+                      totalResult =false;
+                   }
+
+            }
+            result.setResult(totalResult);
+            return result;
+        }
+        return null;
     }
 }

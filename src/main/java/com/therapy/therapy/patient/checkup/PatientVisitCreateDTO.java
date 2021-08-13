@@ -74,6 +74,10 @@ public class PatientVisitCreateDTO {
     private Long departmentId;
     private Long examinerId;
 
+    private String pr;
+    private String spo2;
+    private String bmi;
+
     public static PatientVisit toPatientVisit(PatientVisitCreateDTO dto, Patient patient, Staff staff){
         PatientVisit visit = new PatientVisit();
 
@@ -100,12 +104,18 @@ public class PatientVisitCreateDTO {
         visit.setOrthopedicMetalType(dto.getOrthopedicMetalType());
         visit.setOrthopedicMetalStatus(dto.getOrthopedicMetalStatus());
         visit.setHeadAche(dto.getHeadAche());
+
         visit.setBodyTemperature(dto.getBodyTemperature());
         visit.setPulseRate(dto.getPulseRate());
         visit.setRespirationRate(dto.getRespirationRate());
+        visit.setWeight(dto.getWeight());
+        visit.setHeight(dto.getHeight());
+
         visit.setVisitMethod(dto.getVisitMethod());
         visit.setVitalSignNote(dto.getVitalSignNote());
         visit.setVisitNote(dto.getVisitNote());
+
+
         visit.setEmergencyContactAddress(dto.getEmergencyContactAddress());
         visit.setEmergencyContactEmail(dto.getEmergencyContactEmail());
         visit.setEmergencyContactMobile(dto.getEmergencyContactMobile());
@@ -116,6 +126,11 @@ public class PatientVisitCreateDTO {
         visit.setExaminer(dto.getExaminerId());
 
         visit.setExamined(false);
+
+
+        visit.setBmi(dto.getBmi());
+        visit.setSpo2(dto.getSpo2());
+        visit.setPr(dto.getPr());
 
         return visit;
     }

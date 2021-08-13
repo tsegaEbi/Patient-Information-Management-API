@@ -127,47 +127,7 @@ public class PatientVisitController {
         return  response;
     }
 
-    // due to unexpected and unsolved securitservice null problem, removed to this end point
-    @PreAuthorize("hasAnyAuthority('ADMIN','EXAMINER')")
-    @PostMapping("/addExamination")
-    private ActionResponse<ExaminationDTO> addExamination(@RequestBody ExaminationCreateDTO dto) throws IllegalAccessException{
-        String staffId =securityService.getStaffId();
 
-        Staff staff =staffService.getByStaffId(staffId);
-
-        ActionResponse<ExaminationDTO> response= new ActionResponse<>();
-        response.setResult(false);
-
-        if(staff==null){
-            throw new IllegalArgumentException("Unknown Staff");
-
-        }
-
-        PatientVisit visit =visitService.get(dto.getPatientVisitId());
-
-        if(visit==null){
-            response.setMessage("Unknown Checkups");
-        }
-        else {
-            Examination examination =ExaminationCreateDTO.toExamination(dto,visit,staff);
-            ActionResponse<Examination> result =examinationService.create(examination,dto.getLaboratoryCreates());
-
-            response.setMessage(result.getMessage());
-            response.setResult(result.getResult());
-
-            if(result.getResult()) {
-                List<LabOrderDTO> labOrders =labService.getByExamination((Examination)response.getT())
-                        .stream()
-                        .map(t->LabOrderDTO.toDTO(t,null)).collect(Collectors.toList());
-                if (result.getT() != null) {
-                    response.setT(ExaminationDTO.toDetail((Examination) result.getT(), labOrders));
-                }
-            }
-        }
-
-        return response;
-
-    }
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     @PostMapping("/delete/{id}")
      public ActionResponse<PatientVisitDTO> remove(@PathVariable("id") Long id) throws IllegalAccessException {

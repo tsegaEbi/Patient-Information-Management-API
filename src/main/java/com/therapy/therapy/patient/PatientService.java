@@ -24,4 +24,8 @@ public interface PatientService extends CRUDService<Patient> {
     List<PaymentReferenceDTO> getCardPaymentReference(Long patientId);
 
     Page<Patient> getByCardNumber(Long cardNumber,Pageable pageable);
+
+    int countAll();
+    int countBySex();
+
 }

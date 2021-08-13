@@ -3,10 +3,9 @@ plugins {
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
 }
-//apply plugin: 'war'
+apply plugin: "org.springframework.boot"
 group = 'com.therapy'
 version = '0.0.1-SNAPSHOT'
-//sourceCompatibility = '11'
 
 configurations {
 	compileOnly {
@@ -41,12 +40,7 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	annotationProcessor group: 'org.springframework.boot', name: 'spring-boot-configuration-processor'
 }
-
 test {
 	useJUnitPlatform()
 }
-/*
-bootJar {
-	baseName = 'therapy'
-	version =  '1.0.0'
-}*/
+  

@@ -152,7 +152,13 @@ public class AppointmentController {
                 .stream()
                 .map(a->appointmentHelperService.appointmentDTO(a)).collect(Collectors.toList());
     }
+    @GetMapping("/today")
+    public List<AppointmentDTO>today(){
 
+        return appointmentService.getToday( )
+                .stream()
+                .map(a->appointmentHelperService.appointmentDTO(a)).collect(Collectors.toList());
+    }
     @GetMapping("/{id}")
     public  AppointmentDTO  get(@PathVariable("id")Long id){
 

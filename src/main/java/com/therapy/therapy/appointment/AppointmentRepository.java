@@ -12,6 +12,9 @@ import java.util.List;
 @Repository
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
 
+    @Query(value = "FROM Appointment a where  date BETWEEN :startDate AND :endDate")
+    public List<Appointment> getAllBetweenDates(Date startDate, Date endDate);
+
     @Query("FROM Appointment where patient_id=:patientId AND active=:active ORDER BY  date DESC")
     List<Appointment> findByPatientId(Long patientId, Boolean active);
 

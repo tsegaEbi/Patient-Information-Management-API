@@ -23,4 +23,8 @@ public interface PatientRepository extends JpaRepository<Patient,Long> {
      Page<Patient> searchByQuery(Sex sex, Regions regions, Nationality nationality, Pageable pageable);
 
      Page<Patient> findById(Long id, Pageable pageable);
+
+
+     @Query(value="Select count(*) from patient",nativeQuery = true)
+     int countAll();
 }

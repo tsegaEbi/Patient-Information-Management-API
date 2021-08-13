@@ -1,14 +1,13 @@
-package com.therapy.therapy.icd;
+package com.therapy.therapy.icdCode;
+
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
 @Service
-public class IcdServiceImp implements IcdService {
-
+public class IcdServiceImp implements IcdService{
     private final IcdRepository repository;
 
     public IcdServiceImp(IcdRepository repository){
@@ -18,33 +17,34 @@ public class IcdServiceImp implements IcdService {
     }
 
     @Override
-    public List<Icd> getByCategory(ICD_CATEGORY category) {
-        return null;
+    public Page<Icd> getByCategory(ICD_CATEGORY category, Pageable pageable) {
+        return repository.findByCategory(category,pageable);
+    }
+
+
+    @Override
+    public List<Icd> getBySubCategory(IcdSubCategory sub_category) {
+        return repository.findBySubCategory(sub_category);
     }
 
     @Override
-    public List<Icd> getBySubCategory(ICD_SUB_CATEGORY sub_category) {
-        return null;
-    }
-
-    @Override
-    public Page<Icd> geByKey(String key, Pageable pageable) {
-        return null;
+    public Page<Icd> getByKey(String key, Pageable pageable) {
+        return repository.searchByKey(key,pageable);
     }
 
     @Override
     public Icd getByCode(String code) {
-        return null;
+        return repository.findByCode(code).stream().findFirst().orElse(null);
     }
 
     @Override
     public Icd get(Long id) {
-        return null;
+        return repository.findById(id).orElse(null);
     }
 
     @Override
     public Page list(Pageable pageable) {
-        return null;
+        return repository.findAll(pageable);
     }
 
     @Override

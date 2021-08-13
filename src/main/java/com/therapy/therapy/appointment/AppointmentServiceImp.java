@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 @Service
@@ -22,6 +23,19 @@ public class AppointmentServiceImp implements AppointmentService {
     @Override
     public List<Appointment> getByPatient(Long patientId, Boolean active) {
         return repository.findByPatientId(patientId,active);
+    }
+
+    @Override
+    public List<Appointment> getToday() {
+        Date today = new Date();
+        Calendar c = Calendar.getInstance();
+        c.setTime(today);
+        c.add(Calendar.DATE, 1);
+        Date after = c.getTime();
+
+        c.add(Calendar.DATE, -2);
+        Date before = c.getTime();
+        return  repository.getAllBetweenDates(before,after);
     }
 
     @Override

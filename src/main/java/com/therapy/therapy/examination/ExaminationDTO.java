@@ -46,10 +46,27 @@ public class ExaminationDTO {
 
     private Boolean active;
 
+    private String functionalLimitationActive;
+    private String functionalLimitationPassive;
+    private String functionalLimitationMotor;
+    private String functionalLimitationSensation;
+    private String functionalLimitationReflex;
+    private String functionalLimitationOverPressure;
+
+
 
     public static ExaminationDTO toDTO(Examination examination, List<LaboratoryDTO>labOrders ){
         if(examination!=null) {
             ExaminationDTO dto = new ExaminationDTO();
+
+            dto.setFunctionalLimitationActive(examination.getFunctionalLimitationActive());
+            dto.setFunctionalLimitationPassive(examination.getFunctionalLimitationPassive());
+            dto.setFunctionalLimitationMotor(examination.getFunctionalLimitationMotor());
+            dto.setFunctionalLimitationOverPressure(examination.getFunctionalLimitationOverPressure());
+            dto.setFunctionalLimitationReflex(examination.getFunctionalLimitationReflex());
+            dto.setFunctionalLimitationSensation(examination.getFunctionalLimitationSensation());
+
+
             dto.setId(examination.getId());
             dto.setDisease(examination.getDisease());
             dto.setDiseaseStatement(examination.getDiseaseStatement());
@@ -71,7 +88,7 @@ public class ExaminationDTO {
             dto.setChiefComplaint(examination.getChiefComplaint());
             dto.setDiseaseStatement(examination.getDiseaseStatement());
 
-           dto.setActive(examination.getActive());
+            dto.setActive(examination.getActive());
 
             return dto;
         }
@@ -80,6 +97,13 @@ public class ExaminationDTO {
     public static ExaminationDTO toDTOLab(Examination examination, List<LabOrder>labOrders ){
         if(examination!=null) {
             ExaminationDTO dto = new ExaminationDTO();
+            dto.setFunctionalLimitationActive(examination.getFunctionalLimitationActive());
+            dto.setFunctionalLimitationPassive(examination.getFunctionalLimitationPassive());
+            dto.setFunctionalLimitationMotor(examination.getFunctionalLimitationMotor());
+            dto.setFunctionalLimitationOverPressure(examination.getFunctionalLimitationOverPressure());
+            dto.setFunctionalLimitationReflex(examination.getFunctionalLimitationReflex());
+            dto.setFunctionalLimitationSensation(examination.getFunctionalLimitationSensation());
+
             dto.setId(examination.getId());
             dto.setDisease(examination.getDisease());
             dto.setDiseaseStatement(examination.getDiseaseStatement());
@@ -135,6 +159,13 @@ public class ExaminationDTO {
             dto.setHistoryOfPresentIllness(examination.getHistoryOfPresentIllness());
             dto.setChiefComplaint(examination.getChiefComplaint());
             dto.setDiseaseStatement(examination.getDiseaseStatement());
+
+            dto.setFunctionalLimitationActive(examination.getFunctionalLimitationActive());
+            dto.setFunctionalLimitationPassive(examination.getFunctionalLimitationPassive());
+            dto.setFunctionalLimitationMotor(examination.getFunctionalLimitationMotor());
+            dto.setFunctionalLimitationOverPressure(examination.getFunctionalLimitationOverPressure());
+            dto.setFunctionalLimitationReflex(examination.getFunctionalLimitationReflex());
+            dto.setFunctionalLimitationSensation(examination.getFunctionalLimitationSensation());
 
             dto.setActive(examination.getActive());
 

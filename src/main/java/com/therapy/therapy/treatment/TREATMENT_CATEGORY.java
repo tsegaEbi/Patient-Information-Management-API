@@ -1,6 +1,8 @@
 package com.therapy.therapy.treatment;
 
 public enum TREATMENT_CATEGORY {
+
+        List_of_therapies,
         Abscopal_effect,
         Age_management_medicine,
         Aguamiel,
@@ -191,7 +193,6 @@ public enum TREATMENT_CATEGORY {
         Therapeutic_effect,
         Targeted_temperature_management,
         Therapeutic_irrigation,
-        List_of_therapies,
         Thickened_fluids,
         Time_delay_toxin_activation,
         Tobacco_smoke_enema,

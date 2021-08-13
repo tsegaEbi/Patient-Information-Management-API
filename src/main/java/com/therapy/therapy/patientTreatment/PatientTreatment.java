@@ -20,26 +20,17 @@ public class PatientTreatment extends Model {
     @JoinColumn(name="examination_id")
     private Examination examination;
 
-    @Enumerated(EnumType.STRING)
-    private PATIENT_TREATMENT_FREQUENCY frequency;
-
     @ManyToOne
     @JoinColumn(name="treatment_id")
     private Treatment treatment;
-
-
-    @Enumerated(EnumType.STRING)
-    private TREATMENT_DOS_UNIT unit;
-
-    private Double dose;
-
-    private Double duration;
 
     @Enumerated(EnumType.STRING)
     private TREATMENT_TYPE type;  // addmission or opd
 
     @Enumerated(EnumType.STRING)
     private PATIENT_TREATMENT_RESULT result;
+
+    private String goals;// separated by comma
 
     private Boolean started;
 

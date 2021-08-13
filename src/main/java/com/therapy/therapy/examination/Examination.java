@@ -51,4 +51,16 @@ public class Examination extends Model {
     private String diseaseStatement;
 
     private Boolean active;
+
+    private String functionalLimitationActive;
+    private String functionalLimitationPassive;
+    private String functionalLimitationMotor;
+    private String functionalLimitationSensation;
+    private String functionalLimitationReflex;
+    private String functionalLimitationOverPressure;
+    private String patientExpectation;
+
+
+
+
 }

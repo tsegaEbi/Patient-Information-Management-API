@@ -140,6 +140,16 @@ public class PatientServiceImp implements PatientService {
         return repository.findById(cardNumber,pageable);
     }
 
+    @Override
+    public int countAll() {
+        return repository.countAll();
+    }
+
+    @Override
+    public int countBySex() {
+        return 0;
+    }
+
     private Validation validateCreate(Patient patient){
         Validation validate = new Validation();
         validate.setMessage("validate");

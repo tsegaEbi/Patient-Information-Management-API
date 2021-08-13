@@ -9,12 +9,7 @@ import lombok.Setter;
 public class PatientTreatmentUpdateDTO {
 
     private Long id;
-    private Double dose;
-    private Double duration;
     private PATIENT_TREATMENT_RESULT result;
-    private PATIENT_TREATMENT_FREQUENCY frequency;
-    private Long treatmentId;
-    private TREATMENT_DOS_UNIT unit;
 
 
     public static PatientTreatment  toDTO(PatientTreatmentUpdateDTO  dto, PatientTreatment pt, Treatment treatment){
@@ -23,16 +18,7 @@ public class PatientTreatmentUpdateDTO {
             return null;
         if(dto==null) return pt;
 
-        if(dto.getDose()!=null)
-            pt.setDose(dto.getDose());
 
-        if(dto.getFrequency()!=null)
-            pt.setFrequency(dto.getFrequency());
-
-        if(dto.getDuration()!=null)
-            pt.setDuration(dto.getDuration());
-        if(dto.getUnit()!=null)
-            pt.setUnit(dto.getUnit());
 
         if(treatment.getId()!=pt.getTreatment().getId())
             pt.setTreatment(treatment);

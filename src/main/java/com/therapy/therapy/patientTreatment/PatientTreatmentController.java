@@ -12,6 +12,7 @@ import com.therapy.therapy.security.SecurityService;
 import com.therapy.therapy.staff.Staff;
 import com.therapy.therapy.staff.StaffService;
 import com.therapy.therapy.treatment.Treatment;
+import com.therapy.therapy.treatment.TreatmentDTO;
 import com.therapy.therapy.treatment.TreatmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -21,6 +22,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -53,28 +55,69 @@ public class PatientTreatmentController {
         response.setResult(false);
         response.setMessage("Invalid inputs");
 
-        if (dto.getDose() == null || dto.getDuration() == null || dto.getExaminationId() == null || dto.getTreatmentId() == null
-                || dto.getFrequency() == null)
+        if (dto.getExaminationId() == null || dto.getTreatments() == null ) {
+            response.setMessage("No treatments selected");
             return response;
-
+        }
         Examination exam = examinationService.get(dto.getExaminationId());
         if (exam == null) {
             response.setMessage("Unknown Examination");
             return response;
         }
-        Treatment treatment = treatmentService.get(dto.getTreatmentId());
-        if (treatment == null) {
-            response.setMessage("Unknown Treatment");
+        List<Treatment> treatments = new ArrayList<>() ;
+        for (TreatmentDTO t:dto.getTreatments()
+             ) {
+            treatments.add(treatmentService.get(t.getId()));
+        }
+
+        if (treatments == null) {
+            response.setMessage("Unknown Treatments");
             return response;
         }
 
-        PatientTreatment pt = PatientTreatmentCreateDTO.toPT(dto, exam, treatment);
-        ActionResponse<PatientTreatment> result = patientTreatmentService.create(pt);
+        List<PatientTreatment> patientTreatments = PatientTreatmentCreateDTO.toPT(dto, exam, treatments);
+
+        ActionResponse<PatientTreatment> result = patientTreatmentService.createMultiple(patientTreatments);
         response.setResult(result.getResult());
         response.setMessage(result.getMessage());
         if (result.getT() != null) {
             response.setT(PatientTreatmentDTO.toDTO((PatientTreatment) result.getT()));
         }
+        return response;
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN','EXAMINER')")
+    @PostMapping("/delete/{id}")
+    public  ActionResponse<PatientTreatmentDTO> removeTreatment(@PathVariable("id") Long id ) throws Exception {
+        ActionResponse<PatientTreatmentDTO> response =new ActionResponse<>();
+        response.setMessage("Unknown Treatment");
+        response.setResult(false);
+
+        PatientTreatment pt =patientTreatmentService.get(id);
+
+        if(pt==null)
+            return response;
+
+
+        if(!pt.getResult().equals(PATIENT_TREATMENT_RESULT.PENDING))
+        {
+             response.setMessage("Sorry, your can't delete this treatment");
+            return response;
+        }
+        Staff staff =staffService.getByStaffId(securityService.getStaffId());
+
+        if(pt.getExamination().getExaminer()!=null)
+            if(staff.getId()!=pt.getExamination().getExaminer().getId())
+                if(!securityService.isAdmin())
+                {
+                    response.setMessage("You must be an Admin or the examiner to change the treatment");
+                    return response;
+                }
+
+         patientTreatmentService.delete(pt);
+        response.setT(PatientTreatmentDTO.toDTO(pt));
+        response.setMessage("Successful");
+        response.setResult(true);
         return response;
     }
 
@@ -86,22 +129,30 @@ public class PatientTreatmentController {
         response.setResult(false);
 
         PatientTreatment pt =patientTreatmentService.get(dto.getId());
-        Treatment treatment =treatmentService.get(dto.getTreatmentId());
 
         if(pt==null)
              return response;
-        if(treatment==null)
-        {
-            response.setMessage("Unknown treatment");
+
+        if(!pt.getActive()){
+            response.setMessage("The treatment is not active");
             return response;
         }
-        if(pt.getActive()){
-            response.setMessage("You can't change active treatment");
+        if(pt.getResult().equals(dto.getResult()))
+        {
+
+            response.setMessage("No result change");
             return response;
         }
-        if(!pt.getResult().equals(PATIENT_TREATMENT_RESULT.PENDING))
+        if(pt.getResult().equals(PATIENT_TREATMENT_RESULT.COMPLETED))
         {
-            response.setMessage("You can't change active or in progress treatment");
+            response.setResult(false);
+            response.setMessage("Treatment is already completed");
+            return response;
+        }
+        if(pt.getResult().equals(PATIENT_TREATMENT_RESULT.ABORTED))
+        {
+            response.setResult(false);
+            response.setMessage("Treatment is already aborted");
             return response;
         }
         Staff staff =staffService.getByStaffId(securityService.getStaffId());
@@ -114,13 +165,11 @@ public class PatientTreatmentController {
                  return response;
              }
 
-       PatientTreatment newTreatment =patientTreatmentService.update(PatientTreatmentUpdateDTO.toDTO(dto,pt,treatment));
+       PatientTreatment newTreatment =patientTreatmentService.update(PatientTreatmentUpdateDTO.toDTO(dto,pt,pt.getTreatment()));
        response.setT(PatientTreatmentDTO.toDTO(newTreatment));
        response.setMessage("Successful");
        response.setResult(true);
-
-
-        return response;
+       return response;
     }
 
     @GetMapping("/list/{pageNumber}")
@@ -171,6 +220,7 @@ public class PatientTreatmentController {
         return PatientTreatmentDTO.toDTO(patientTreatmentService.get(id));
     }
     @PostMapping("/updateResult")
+
     public  ActionResponse<PatientTreatmentDTO>  updateResult(@RequestBody PatientTreatmentResultUpdateDTO dto) throws Exception {
 
         ActionResponse<PatientTreatmentDTO> response = new ActionResponse<>();
@@ -185,7 +235,18 @@ public class PatientTreatmentController {
             response.setMessage("Unknown Treatment");
             return response;
         }
-
+       if(treatment.getResult().equals(PATIENT_TREATMENT_RESULT.COMPLETED))
+       {
+           response.setResult(false);
+           response.setMessage("Treatment is already completed");
+           return response;
+       }
+        if(treatment.getResult().equals(PATIENT_TREATMENT_RESULT.ABORTED))
+        {
+            response.setResult(false);
+            response.setMessage("Treatment is already aborted");
+            return response;
+        }
         if(!securityService.isAdmin() && treatment.getExamination().getExaminer().getId()==staff.getId()){
             response.setMessage("No privileges to change treatment result");
             response.setResult(false);
@@ -198,7 +259,7 @@ public class PatientTreatmentController {
             return response;
         }
 
-        if(treatment.getResult().equals(PATIENT_TREATMENT_RESULT.COMPLETED)){
+        if(treatment.getResult()==PATIENT_TREATMENT_RESULT.COMPLETED){
             response.setMessage("The Treatment is already completed");
             response.setResult(false);
             return response;
@@ -216,7 +277,7 @@ public class PatientTreatmentController {
     }
     @PreAuthorize("hasAnyAuthority('ADMIN','EXAMINER','NURSE','MEDICAL')")
     @PostMapping("/progress/create")
-    public   ActionResponse<TreatmentProgressDTO>  updateResult(@RequestBody TreatmentProgressCreateDTO dto) throws Exception {
+    public   ActionResponse<TreatmentProgressDTO>  createProgress(@RequestBody TreatmentProgressCreateDTO dto) throws Exception {
 
         PatientTreatment pt =patientTreatmentService.get((dto.getPatientTreatmentId()));
 
@@ -235,11 +296,7 @@ public class PatientTreatmentController {
              return response;
          }
         if(pt.getResult().equals(PATIENT_TREATMENT_RESULT.COMPLETED)){
-            response.setMessage("The treatment is aborted. You can't make progress on a TERMINATED treatment");
-            return response;
-        }
-        if(!pt.getActive()){
-            response.setMessage("The treatment is NOT_ACTIVE. You can't make progress on an INACTIVE treatment");
+            response.setMessage("The treatment is completed. You can't make progress on a TERMINATED treatment");
             return response;
         }
 
@@ -252,7 +309,7 @@ public class PatientTreatmentController {
 
     @GetMapping("/progress/list/{pageNumber}")
     public Page<TreatmentProgressDTO> progressList(@PathVariable("pageNumber") int pageNumber) {
-        Sort sort = Sort.by(Sort.Direction.ASC, "id");
+        Sort sort = Sort.by(Sort.Direction.DESC, "id");
         Pageable pageable = PageRequest.of(pageNumber, Constants.PAGE_SIZE, sort);
         return progressService.list(pageable).map(t -> TreatmentProgressDTO.toDTO(t));
     }

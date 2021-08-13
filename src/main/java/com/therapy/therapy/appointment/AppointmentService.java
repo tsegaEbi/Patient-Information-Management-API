@@ -11,6 +11,8 @@ public interface AppointmentService extends CRUDService<Appointment> {
 
     List<Appointment> getByPatient(Long patientId,Boolean active);
 
+    List<Appointment> getToday( );
+
     Page<Appointment> getByExaminer(Long examinerId, Boolean active, Pageable pageable);
 
     Page<Appointment> getByDepartment(Long departmentId, Boolean active, Pageable pageable);
