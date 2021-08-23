@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -140,15 +141,6 @@ public class PatientServiceImp implements PatientService {
         return repository.findById(cardNumber,pageable);
     }
 
-    @Override
-    public int countAll() {
-        return repository.countAll();
-    }
-
-    @Override
-    public int countBySex() {
-        return 0;
-    }
 
     private Validation validateCreate(Patient patient){
         Validation validate = new Validation();
@@ -166,4 +158,21 @@ public class PatientServiceImp implements PatientService {
     public void delete(Patient patient) {
 
     }
+
+
+//
+    @Override
+    public int countAll() {
+        return repository.countAll();
+    }
+
+    @Override
+    public int countByInterval(Date startDate, Date endDate) {
+
+        return repository.getByInterval(startDate,endDate);
+
+    }
+
+
+
 }

@@ -7,6 +7,7 @@ import com.therapy.therapy.finance.paymentReference.PaymentReferenceDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.Date;
 import java.util.List;
 
 public interface PatientService extends CRUDService<Patient> {
@@ -26,6 +27,6 @@ public interface PatientService extends CRUDService<Patient> {
     Page<Patient> getByCardNumber(Long cardNumber,Pageable pageable);
 
     int countAll();
-    int countBySex();
+    int countByInterval(Date startDate, Date endDate);
 
 }

@@ -1,12 +1,15 @@
 package com.therapy.therapy.patientTreatment;
 
 import com.therapy.therapy.examination.ExaminationDTO;
+import com.therapy.therapy.patientTreatment.progress.TreatmentProgress;
+import com.therapy.therapy.patientTreatment.progress.TreatmentProgressDTO;
 import com.therapy.therapy.treatment.Treatment;
 import com.therapy.therapy.treatment.TreatmentDTO;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.List;
 
 @Setter
 @Getter
@@ -31,7 +34,28 @@ public class PatientTreatmentDTO {
     private String goals;
     private String note;
 
+    private List<TreatmentProgressDTO>progresses;
 
+    public static PatientTreatmentDTO toDetailReport(PatientTreatment  tr, List<TreatmentProgressDTO> progresses){
+        PatientTreatmentDTO dto = new PatientTreatmentDTO();
+        dto.setId(tr.getId());
+
+        dto.setType(tr.getType());
+        dto.setTreatment(TreatmentDTO.toDTO(tr.getTreatment()));
+
+        dto.setResult(tr.getResult());
+        dto.setStarted(tr.getStarted());
+        dto.setStartedDate(tr.getStartedDate());
+        dto.setActive(tr.getActive());
+        dto.setCompletedDate(tr.getCompletedDate());
+        dto.setGoals(tr.getGoals());
+        dto.setNote(tr.getNote());
+
+        if(progresses!=null)
+            dto.setProgresses(progresses);
+
+        return dto;
+    }
     public static PatientTreatmentDTO toDTO(PatientTreatment  tr){
          PatientTreatmentDTO dto = new PatientTreatmentDTO();
          dto.setId(tr.getId());

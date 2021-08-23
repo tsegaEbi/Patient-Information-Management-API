@@ -24,7 +24,8 @@ import java.util.stream.Collectors;
 public class PatientController {
     @Autowired
     private PatientService patientService;
-
+    @Autowired
+    private PatientReportHelperService reportHelperService;
     @Autowired
     private PaymentReferenceService referenceService;
 
@@ -70,6 +71,16 @@ public class PatientController {
 
         return PatientDetailDTO.toDetailDTO(patient,payRefers.stream()
                 .map(r-> PaymentReferenceDTO.toDTO(r,paymentService.getByPatientId(patient.getId()))).collect(Collectors.toList()));
+    }
+    @GetMapping("/report/{id}")
+    public PatientDetailDTO getReport(@PathVariable("id")Long id)
+    {
+        Patient patient = patientService.get(id);
+        if(patient ==null)
+            return null;
+
+
+       return reportHelperService.getDetail(patient);
     }
     @PreAuthorize("hasAnyAuthority('ADMIN','CARD')")
     @PostMapping("/update")

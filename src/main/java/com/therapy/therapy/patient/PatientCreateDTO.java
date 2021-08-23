@@ -40,6 +40,8 @@ public class PatientCreateDTO {
     private Nationality country;
     private Nationality nationality;
 
+    private Integer age;
+
     public static Patient  toPatient(PatientCreateDTO patient ){
 
         Patient dto = new Patient();
@@ -65,6 +67,7 @@ public class PatientCreateDTO {
         dto.setPrefix(patient.getPrefix());
         dto.setRegions(patient.getRegions());
 
+        dto.setAge(patient.getAge());
         return dto;
     }
 }
