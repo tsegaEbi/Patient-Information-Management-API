@@ -9,5 +9,6 @@ public enum LABORATORY_CATEGORY {
     Surgical_Pathology,
     Pathology,
     Cytology,
+    Radiology,
     Others
 }
