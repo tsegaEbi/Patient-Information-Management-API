@@ -13,7 +13,8 @@ public class HealthProblemSearchQuery {
 
     private ICD_CATEGORY category;
 
+     private HEALTH_PROBLEM_STATUS status;
+
     private Long icdSubCategory;
 
-    private HEALTH_PROBLEM_STATUS status;
 }

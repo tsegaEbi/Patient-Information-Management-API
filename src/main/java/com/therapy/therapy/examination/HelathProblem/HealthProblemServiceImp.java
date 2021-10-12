@@ -2,6 +2,7 @@ package com.therapy.therapy.examination.HelathProblem;
 
 import com.therapy.therapy.common.ActionResponse;
 import com.therapy.therapy.examination.Examination;
+import com.therapy.therapy.icdCode.ICD_CATEGORY;
 import com.therapy.therapy.icdCode.Icd;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -60,8 +61,8 @@ public class HealthProblemServiceImp implements HealthProblemService{
 
         ActionResponse<HealthProblem> response = new ActionResponse<>();
 
-        if(getByExaminationAndIcd(problem.getExamination(),problem.getIcd())!=null || getByExaminationAndIcd(problem.getExamination(),problem.getIcd()).size()!=0){
-            response.setMessage("The Problem already reported for this examination");
+        if(getByExaminationAndIcd(problem.getExamination(),problem.getIcd())!=null && getByExaminationAndIcd(problem.getExamination(),problem.getIcd()).size()!=0){
+            response.setMessage("The Problem already reported for this examination="+problem.getExamination().getId()+", and ICD="+problem.getIcd().getId());
             response.setResult(false);
             response.setT(problem);
             return response;
@@ -92,5 +93,20 @@ public class HealthProblemServiceImp implements HealthProblemService{
     @Override
     public Page<HealthProblem> searchByQuery(HealthProblemSearchQuery query, Pageable pageable) {
         return repository.searchByQuery(query.getIcdId(),query.getIcdSubCategory(),query.getCategory(),query.getStatus(),pageable);
+    }
+
+    @Override
+    public Page<HealthProblem> getByIcdCode(Long icdId, HEALTH_PROBLEM_STATUS status, Pageable pageable) {
+        return repository.searchByQuery(icdId,null,null,status,pageable);
+    }
+
+    @Override
+    public Page<HealthProblem> getByIcdSubCategory(Long icdSubCatId, HEALTH_PROBLEM_STATUS status, Pageable pageable) {
+        return  repository.searchByQuery(null,icdSubCatId,null,status,pageable);
+    }
+
+    @Override
+    public Page<HealthProblem> getByIcdCategory(ICD_CATEGORY category, HEALTH_PROBLEM_STATUS status, Pageable pageable) {
+        return  repository.searchByQuery(null,null,category,status,pageable);
     }
 }

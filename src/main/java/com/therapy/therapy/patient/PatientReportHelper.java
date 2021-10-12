@@ -5,6 +5,8 @@ import com.therapy.therapy.department.DepartmentService;
 import com.therapy.therapy.examination.Examination;
 import com.therapy.therapy.examination.ExaminationDTO;
 import com.therapy.therapy.examination.ExaminationService;
+import com.therapy.therapy.examination.labOrder.Image.LabOrderResultImage;
+import com.therapy.therapy.examination.labOrder.Image.LabOrderResultImageService;
 import com.therapy.therapy.examination.labOrder.LabOrder;
 import com.therapy.therapy.examination.labOrder.LabOrderDTO;
 import com.therapy.therapy.examination.labOrder.LabOrderService;
@@ -49,6 +51,9 @@ public class PatientReportHelper implements PatientReportHelperService {
     private LabOrderService labOrderService;
 
     @Autowired
+    private LabOrderResultImageService resultImageService;
+
+    @Autowired
     private PatientTreatmentService patientTreatmentService;
 
     @Autowired
@@ -66,7 +71,9 @@ public class PatientReportHelper implements PatientReportHelperService {
     @Override
     public PatientDetailDTO getDetail(Patient patient){
         PatientDetailDTO patientDetail = new PatientDetailDTO();
+
         if(patient ==null) return null;
+
         patientDetail.setPatient(PatientDTO.patientDTO(patient));
         List<Examination> exams =examinationService.getAllByPatient(patient.getId());
         List<ExaminationDTO> examDTOs =new ArrayList<>();
@@ -81,10 +88,11 @@ public class PatientReportHelper implements PatientReportHelperService {
 
                 if(labOrders!=null){
                     for(LabOrder order:labOrders){
+                        List<LabOrderResultImage>images =resultImageService.findByLabOrder(order);
                         if(order.getTechnician()!=null && staffService.get(order.getTechnician())!=null){
-                            labDTOs.add(LabOrderDTO.toDetailDTO(order,staffService.get(order.getTechnician())));
+                            labDTOs.add(LabOrderDTO.toDetailDTO(order,images,staffService.get(order.getTechnician())));
                          } else{
-                            labDTOs.add(LabOrderDTO.toDetailDTO(order,null));
+                            labDTOs.add(LabOrderDTO.toDetailDTO(order,images,null));
                         }
                     }
                }

@@ -39,6 +39,9 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	annotationProcessor group: 'org.springframework.boot', name: 'spring-boot-configuration-processor'
+
+
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
 }
 test {
 	useJUnitPlatform()

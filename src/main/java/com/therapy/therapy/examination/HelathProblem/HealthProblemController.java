@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -31,6 +32,7 @@ public class HealthProblemController {
     private IcdService icdService;
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN','EXAMINER','MEDICAL','NURSE')")
     public  HealthProblemDTO  get(@PathVariable("id")Long id){
         HealthProblem problem =healthProblemService.get(id);
         if(problem==null)
@@ -39,6 +41,7 @@ public class HealthProblemController {
          return HealthProblemDTO.toDTO(problem) ;
     }
     @GetMapping("/solve/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN','EXAMINER','MEDICAL','NURSE')")
     public  HealthProblemDTO  get(@PathVariable("id")Long id,@RequestParam("solvedNote")String solvedNote) throws Exception {
         HealthProblem problem =healthProblemService.get(id);
         if(problem==null)
@@ -49,6 +52,7 @@ public class HealthProblemController {
         return HealthProblemDTO.toDTO(healthProblemService.add(problem)) ;
     }
     @GetMapping("/examination/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN','EXAMINER','MEDICAL','NURSE')")
     public List<HealthProblemDTO> listByExamination(@PathVariable("id")Long id){
         Examination examination= examinationService.get(id);
         if(examination==null) return null;
@@ -56,11 +60,13 @@ public class HealthProblemController {
         return healthProblemService.getByExamination(examination).stream().map(e->HealthProblemDTO.toDTO(e)).collect(Collectors.toList());
     }
     @GetMapping("/patient/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN','EXAMINER','MEDICAL','NURSE')")
     public List<HealthProblemDTO> listByPatient(@PathVariable("id")Long id){
 
         return healthProblemService.getByPatient(id).stream().map(e->HealthProblemDTO.toDTO(e)).collect(Collectors.toList());
     }
     @GetMapping("/list/{pageNumber}")
+    @PreAuthorize("hasAnyAuthority('ADMIN','EXAMINER','MEDICAL','NURSE')")
     public Page<HealthProblemDTO> list(@PathVariable("pageNumber")int pageNumber){
         Sort sort = Sort.by(Sort.Direction.DESC,"id");
         Pageable pageable = PageRequest.of(pageNumber, Constants.PAGE_SIZE, sort);
@@ -68,13 +74,26 @@ public class HealthProblemController {
     }
 
     @PostMapping("/byQuery")
+    @PreAuthorize("hasAnyAuthority('ADMIN','EXAMINER','MEDICAL','NURSE')")
     public Page<HealthProblemDTO> searchByQuery(@RequestBody HealthProblemSearchQuery query){
         Sort sort = Sort.by(Sort.Direction.DESC,"id");
         Pageable pageable = PageRequest.of(query.getPageNumber(), Constants.PAGE_SIZE, sort);
+
+        // BY_ICD, BY_SUB, BY_CAT
+        if( query.getIcdId()!=null){
+            return healthProblemService.getByIcdCode(query.getIcdId(),query.getStatus(),pageable).map(t->HealthProblemDTO.toDTO(t));
+        }
+        else if(query.getIcdSubCategory()!=null){
+            return healthProblemService.getByIcdSubCategory(query.getIcdSubCategory(),query.getStatus(),pageable).map(t->HealthProblemDTO.toDTO(t));
+        }
+        else if (query.getCategory()!=null){
+            return healthProblemService.getByIcdCategory(query.getCategory(),query.getStatus(),pageable).map(t->HealthProblemDTO.toDTO(t));
+        }
         return healthProblemService.searchByQuery(query,pageable).map(t->HealthProblemDTO.toDTO(t));
     }
 
     @PostMapping("/add")
+    @PreAuthorize("hasAnyAuthority('ADMIN','EXAMINER','MEDICAL','NURSE')")
     public ActionResponse<HealthProblemDTO> create(@RequestBody HealthProblemCreateDTO dto){
         ActionResponse<HealthProblemDTO> response = new ActionResponse();
         Examination examination =examinationService.get(dto.getExaminationId());

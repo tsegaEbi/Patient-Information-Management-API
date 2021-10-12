@@ -24,7 +24,7 @@ public interface HealthProblemRepository extends JpaRepository<HealthProblem,Lon
 
     @Query("FROM HealthProblem l WHERE " +
             "(:icdId is null  or l.icd.id = :icdId)" +
-            " and (:subCategory is null  or l.icd.subCategory.id = :subCategoryId)" +
+            " and (:subCategory is null  or l.icd.subCategory.id = :subCategory)" +
             " and (:status is null  or l.status = :status)" +
             " and (:category is null  or l.icd.subCategory.category = :category)" )
     Page<HealthProblem> searchByQuery(Long icdId,Long subCategory, ICD_CATEGORY category, HEALTH_PROBLEM_STATUS status, Pageable pageable);

@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 @Service
 public class IcdServiceImp implements IcdService{
@@ -48,8 +49,9 @@ public class IcdServiceImp implements IcdService{
     }
 
     @Override
+    @Transactional
     public Icd add(Icd icd) throws Exception {
-        return null;
+        return repository.save(icd);
     }
 
     @Override
