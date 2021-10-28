@@ -25,7 +25,8 @@ Departments and staff management,
 
 Resources
 - Spring boot
-
+* If you are inteeste and need to add and features and customize in your own requirements, please contact me,
+* 
 The front-end part is already developed using angular. Anyone interested, contact me via my email address or comment under the repo
 tsegamtu@gmail.com
 LinkdIn
