@@ -37,6 +37,14 @@ public class ExaminationCreateDTO {
 
     private List<Laboratory>laboratoryCreates ;
 
+    private String functionalLimitationActive;
+    private String functionalLimitationPassive;
+    private String functionalLimitationMotor;
+    private String functionalLimitationSensation;
+    private String functionalLimitationReflex;
+    private String functionalLimitationOverPressure;
+    private String patientExpectation;
+
     public static Examination toExamination(ExaminationCreateDTO dto, PatientVisit visit, Staff staff){
 
             Examination exam = new Examination();
@@ -58,6 +66,16 @@ public class ExaminationCreateDTO {
             exam.setActive(true);
 
 
-            return exam;
+           exam.setFunctionalLimitationActive(dto.getFunctionalLimitationActive());
+           exam.setFunctionalLimitationPassive(dto.getFunctionalLimitationPassive());
+           exam.setFunctionalLimitationMotor(dto.getFunctionalLimitationMotor());
+           exam.setFunctionalLimitationOverPressure(dto.getFunctionalLimitationOverPressure());
+           exam.setFunctionalLimitationReflex(dto.getFunctionalLimitationReflex());
+           exam.setFunctionalLimitationReflex(dto.getFunctionalLimitationSensation());
+
+           exam.setPatientExpectation(dto.getPatientExpectation());
+
+
+           return exam;
     }
 }

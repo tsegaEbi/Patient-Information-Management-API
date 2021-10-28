@@ -27,4 +27,6 @@ public interface PatientTreatmentService extends CRUDService<PatientTreatment> {
     PatientTreatment updateResult(Long id, PATIENT_TREATMENT_RESULT result);
 
     Page<PatientTreatment> getAllByExaminerAndStatus(Long staffId,PATIENT_TREATMENT_RESULT result);
+
+    ActionResponse<PatientTreatment> createMultiple(List<PatientTreatment> treatments);
 }

@@ -6,6 +6,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserEntityServiceImp implements UserEntityService {
     private final UserEntityRepository repository;
@@ -25,6 +27,12 @@ public class UserEntityServiceImp implements UserEntityService {
     }
 
     @Override
+    public List<UserEntity> listAll() {
+        return repository.findAll();
+    }
+
+
+    @Override
     public UserEntity get(Long id) {
 
         return repository.findById(id).orElse(null);
@@ -41,18 +49,6 @@ public class UserEntityServiceImp implements UserEntityService {
 
 
 
-
-        if(getByStaffId(userEntity.getUserName())!=null)
-            throw new IllegalArgumentException("Staff is already registered="+userEntity.getUserName());
-        if(userEntity.getPassword()==null || userEntity.getPassword().length()<2)
-            throw new IllegalArgumentException("Password size is too small");
-        if(userEntity.getUserName()==null || userEntity.getUserName().length()<1)
-            throw new IllegalArgumentException("Staff Id is invalid");
-
-        Staff staff= staffRepository.findByStaffId(userEntity.getUserName());
-        if(staff==null)
-            throw new IllegalArgumentException("Staff not find with StaffId="+userEntity.getUserName());
-
         return repository.save(userEntity);
 
 
@@ -67,6 +63,6 @@ public class UserEntityServiceImp implements UserEntityService {
 
     @Override
     public void delete(UserEntity userEntity) {
-
+        repository.delete(userEntity);
     }
 }

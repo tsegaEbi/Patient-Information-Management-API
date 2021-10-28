@@ -1,27 +1,23 @@
 package com.therapy.therapy.patientTreatment;
 
 import com.therapy.therapy.examination.ExaminationDTO;
+import com.therapy.therapy.patientTreatment.progress.TreatmentProgress;
+import com.therapy.therapy.patientTreatment.progress.TreatmentProgressDTO;
 import com.therapy.therapy.treatment.Treatment;
 import com.therapy.therapy.treatment.TreatmentDTO;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.List;
 
 @Setter
 @Getter
 public class PatientTreatmentDTO {
     private Long id;
     private ExaminationDTO examination;
-    private PATIENT_TREATMENT_FREQUENCY frequency;
-
     private TreatmentDTO treatment;
 
-    private TREATMENT_DOS_UNIT unit;
-
-    private Double dose;
-
-    private Double duration;
 
     private TREATMENT_TYPE type;  // addmission or opd
 
@@ -34,18 +30,37 @@ public class PatientTreatmentDTO {
     private Boolean active;
 
     private Date completedDate;
-    //for updating
-    private Long treatmentId;
 
+    private String goals;
+    private String note;
 
+    private List<TreatmentProgressDTO>progresses;
+
+    public static PatientTreatmentDTO toDetailReport(PatientTreatment  tr, List<TreatmentProgressDTO> progresses){
+        PatientTreatmentDTO dto = new PatientTreatmentDTO();
+        dto.setId(tr.getId());
+
+        dto.setType(tr.getType());
+        dto.setTreatment(TreatmentDTO.toDTO(tr.getTreatment()));
+
+        dto.setResult(tr.getResult());
+        dto.setStarted(tr.getStarted());
+        dto.setStartedDate(tr.getStartedDate());
+        dto.setActive(tr.getActive());
+        dto.setCompletedDate(tr.getCompletedDate());
+        dto.setGoals(tr.getGoals());
+        dto.setNote(tr.getNote());
+
+        if(progresses!=null)
+            dto.setProgresses(progresses);
+
+        return dto;
+    }
     public static PatientTreatmentDTO toDTO(PatientTreatment  tr){
          PatientTreatmentDTO dto = new PatientTreatmentDTO();
          dto.setId(tr.getId());
-         dto.setDose(tr.getDose());
-         dto.setDuration(tr.getDuration());
-         dto.setFrequency(tr.getFrequency());
+
          dto.setType(tr.getType());
-         dto.setUnit(tr.getUnit());
 
          dto.setExamination(ExaminationDTO.toDTO(tr.getExamination(),null));
          dto.setTreatment(TreatmentDTO.toDTO(tr.getTreatment()));
@@ -55,6 +70,8 @@ public class PatientTreatmentDTO {
          dto.setStartedDate(tr.getStartedDate());
          dto.setActive(tr.getActive());
          dto.setCompletedDate(tr.getCompletedDate());
+         dto.setGoals(tr.getGoals());
+         dto.setNote(tr.getNote());
 
          return dto;
     }
@@ -64,14 +81,6 @@ public class PatientTreatmentDTO {
             return null;
         if(dto==null) return pt;
 
-        if(dto.getDose()!=null)
-            pt.setDose(dto.getDose());
-
-        if(dto.getFrequency()!=null)
-            pt.setFrequency(dto.getFrequency());
-
-        if(dto.getDuration()!=null)
-            pt.setDuration(dto.getDuration());
 
         if(treatment.getId()!=dto.getTreatment().getId())
             pt.setTreatment(treatment);

@@ -2,11 +2,14 @@ package com.therapy.therapy.user.roles.userRole;
 
 import com.therapy.therapy.user.UserEntity;
 import com.therapy.therapy.user.UserEntityService;
+import com.therapy.therapy.user.roles.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -31,12 +34,12 @@ public class UserRoleServiceImp implements UserRoleService {
 
     @Override
     public Page<UserRole> list(Pageable pageable) {
-        return null;
+        return repository.findAll(pageable);
     }
 
     @Override
     public UserRole add(UserRole userRole) throws Exception {
-        return null;
+        return repository.save(userRole);
     }
 
     @Override
@@ -46,7 +49,7 @@ public class UserRoleServiceImp implements UserRoleService {
 
     @Override
     public void delete(UserRole userRole) throws Exception {
-
+                    repository.delete(userRole);
     }
 
      @Override
@@ -59,5 +62,20 @@ public class UserRoleServiceImp implements UserRoleService {
 
           return null;
      }
+
+    @Override
+    @Transactional
+    public List<UserRole> addRoles(UserEntity user, List<Role> roles) throws Exception {
+        List<UserRole> addRoles =new ArrayList<>();
+        for(Role role:roles){
+
+            UserRole ur = new UserRole();
+            ur.setRole(role);
+            ur.setUser(user);
+            addRoles.add(add(ur));
+
+       }
+        return addRoles;
+    }
 
 }

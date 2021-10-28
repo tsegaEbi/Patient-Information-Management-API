@@ -54,6 +54,6 @@ public class Patient extends Model {
     @Enumerated(EnumType.STRING)
     private Nationality nationality;
 
-
+    private Integer age=0;
 
 }

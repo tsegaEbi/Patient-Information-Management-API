@@ -63,7 +63,7 @@ public class PatientVisitDTO {
 
     private Double bodyTemperature;
     private String pulseRate;
-    private String respirationRate;
+    private String pr;
     private String bloodPressure;
     private Double weight;
     private Double height;
@@ -86,7 +86,9 @@ public class PatientVisitDTO {
     private String assignedDepartment;
 
 
-
+   //
+    private String spo2;
+    private String bmi;
     //
     private ExaminationDTO examination;
 
@@ -94,6 +96,9 @@ public class PatientVisitDTO {
         if(dto!=null) {
 
             PatientVisitDTO visit = new PatientVisitDTO();
+            visit.setPr(dto.getPr());
+            visit.setSpo2(dto.getSpo2());
+            visit.setBmi(dto.getBmi());
 
             visit.setId(dto.getId());
             visit.setPatientId(dto.getPatient().getId());
@@ -121,8 +126,12 @@ public class PatientVisitDTO {
             visit.setOrthopedicMetalStatus(dto.getOrthopedicMetalStatus());
             visit.setHeadAche(dto.getHeadAche());
             visit.setBodyTemperature(dto.getBodyTemperature());
+
             visit.setPulseRate(dto.getPulseRate());
-            visit.setRespirationRate(dto.getRespirationRate());
+            visit.setPr(dto.getRespirationRate());
+            visit.setHeight(dto.getHeight());
+            visit.setWeight(dto.getWeight());
+
             visit.setVisitMethod(dto.getVisitMethod());
             visit.setVitalSignNote(dto.getVitalSignNote());
             visit.setVisitNote(dto.getVisitNote());
@@ -149,6 +158,11 @@ public class PatientVisitDTO {
             if(exam!=null){
                 visit.setExamination(exam);
             }
+
+            visit.setBmi(dto.getBmi());
+            visit.setSpo2(dto.getSpo2());
+            visit.setPr(dto.getPr());
+
             return visit;
         }
         return null;
@@ -185,7 +199,7 @@ public class PatientVisitDTO {
             visit.setHeadAche(dto.getHeadAche());
             visit.setBodyTemperature(dto.getBodyTemperature());
             visit.setPulseRate(dto.getPulseRate());
-            visit.setRespirationRate(dto.getRespirationRate());
+
             visit.setVisitMethod(dto.getVisitMethod());
             visit.setVitalSignNote(dto.getVitalSignNote());
             visit.setVisitNote(dto.getVisitNote());
@@ -204,6 +218,9 @@ public class PatientVisitDTO {
                 visit.setAssigned(true);
             }
 
+            visit.setPr(dto.getPr());
+            visit.setSpo2(dto.getSpo2());
+            visit.setBmi(dto.getBmi());
 
             return visit;
         }

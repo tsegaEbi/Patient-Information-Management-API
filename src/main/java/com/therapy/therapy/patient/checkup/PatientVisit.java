@@ -89,5 +89,8 @@ public class PatientVisit extends Model {
     private Long examiner;
     private Long department;
     private Boolean examined;
-
+ //
+  private String pr;
+    private String spo2;
+    private String bmi;
 }

@@ -3,9 +3,12 @@ package com.therapy.therapy.examination;
 import com.therapy.therapy.common.ActionResponse;
 import com.therapy.therapy.common.ORDER_STATUS;
 import com.therapy.therapy.configuration.Constants;
+import com.therapy.therapy.document.DocumentService;
 import com.therapy.therapy.examination.labOrder.*;
-import com.therapy.therapy.examination.patientHealthProblem.HealthProblemService;
-import com.therapy.therapy.icd.IcdService;
+import com.therapy.therapy.examination.labOrder.Image.LabOrderResultImage;
+import com.therapy.therapy.examination.labOrder.Image.LabOrderResultImageDTO;
+import com.therapy.therapy.examination.labOrder.Image.LabOrderResultImageService;
+import com.therapy.therapy.icdCode.IcdService;
 import com.therapy.therapy.laboratory.Laboratory;
 import com.therapy.therapy.laboratory.LaboratoryService;
 import com.therapy.therapy.patient.checkup.PatientVisit;
@@ -14,14 +17,23 @@ import com.therapy.therapy.security.SecurityService;
 import com.therapy.therapy.staff.Staff;
 import com.therapy.therapy.staff.StaffService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,8 +44,6 @@ import java.util.stream.Collectors;
 @RequestMapping("/examination")
 public class ExaminationController {
 
-
-    private final HealthProblemService patientHealthProblemService;
 
 
     @Autowired
@@ -58,11 +68,53 @@ public class ExaminationController {
     @Autowired
     private IcdService iCdService;
 
-    public ExaminationController(HealthProblemService healthProblemService){
-        this.patientHealthProblemService =healthProblemService;
+    @Autowired
+    private DocumentService documentService;
+
+    @Autowired
+    private LabOrderResultImageService labOrderImageService;
+
+
+    // due to unexpected and unsolved securitservice null problem, removed to this end point
+    @PostMapping("/addExamination")
+    @PreAuthorize("hasAnyAuthority('ADMIN','EXAMINER','MEDICAL','NURSE')")
+    public ActionResponse<ExaminationDTO> addExamination(@RequestBody ExaminationCreateDTO dto) {
+
+        Staff staff =staffService.getByStaffId(securityService.getStaffId());
+
+        ActionResponse<ExaminationDTO> response= new ActionResponse<>();
+        response.setResult(false);
+
+        if(staff==null){
+            throw new IllegalArgumentException("Unknown Staff");
+
+        }
+
+        PatientVisit visit =patientVisitService.get(dto.getPatientVisitId());
+
+        if(visit==null){
+            response.setMessage("Unknown Checkups");
+        }
+        else {
+            Examination examination =ExaminationCreateDTO.toExamination(dto,visit,staff);
+            ActionResponse<Examination> result =examinationService.create(examination,dto.getLaboratoryCreates());
+
+            response.setMessage(result.getMessage());
+            response.setResult(result.getResult());
+
+            if(result.getResult()) {
+                List<LabOrderDTO> labOrders =labService.getByExamination((Examination)response.getT())
+                        .stream()
+                        .map(t->LabOrderDTO.toDTO(t,null)).collect(Collectors.toList());
+                if (result.getT() != null) {
+                    response.setT(ExaminationDTO.toDetail((Examination) result.getT(), labOrders));
+                }
+            }
+        }
+
+        return response;
+
     }
-
-
 
     @GetMapping("/{id}")
     public ExaminationDTO get(@PathVariable("id")Long id){
@@ -110,39 +162,7 @@ public class ExaminationController {
         return ExaminationDTO.toDTOLab(examination,labService.getByExamination(examination));
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN','EXAMINER')")
-    @PostMapping("/add")
-    private ActionResponse<ExaminationDTO> addExamination(@RequestBody ExaminationCreateDTO dto) throws IllegalAccessException{
-        String staffId =securityService.getStaffId();
 
-        Staff staff =staffService.getByStaffId(staffId);
-
-        ActionResponse<ExaminationDTO> response= new ActionResponse<>();
-        response.setResult(false);
-
-        if(staff==null){
-           throw new IllegalArgumentException("Unknown Staff");
-
-        }
-
-        PatientVisit visit =patientVisitService.get(dto.getPatientVisitId());
-
-         if(visit==null){
-            response.setMessage("Unknown Checkups");
-        }
-        else {
-            Examination examination =ExaminationCreateDTO.toExamination(dto,visit,staff);
-            ActionResponse<Examination> result =examinationService.create(examination,dto.getLaboratoryCreates());
-
-            response.setMessage(result.getMessage());
-            response.setResult(result.getResult());
-            if(response.getT()!=null)
-                response.setT(ExaminationDTO.toDTOLab((Examination)result.getT(),labService.getByExamination((Examination)result.getT())));
-        }
-
-        return response;
-
-    }
     @PreAuthorize("hasAnyAuthority('ADMIN','EXAMINER','NURSE','CARD')")
     @GetMapping("/list")
     public Page<ExaminationDTO> list(@RequestParam("pageNumber")int pageNumber){
@@ -196,6 +216,7 @@ public class ExaminationController {
     }
 
     @PostMapping("/updateChart")
+    @PreAuthorize("hasAnyAuthority('ADMIN','EXAMINER','MEDICAL','NURSE')")
     public ExaminationDTO updateChart(@RequestBody ExaminationUpdateDTO dto) throws Exception {
         Staff staff =staffService.getByStaffId(securityService.getStaffId());
 
@@ -306,6 +327,7 @@ public class ExaminationController {
         return null; // no examination
     }
     @PostMapping("/labOrder/byQuery")
+    @PreAuthorize("hasAnyAuthority('ADMIN','EXAMINER','MEDICAL','NURSE')")
     public Page<LabOrderDTO> searchByQuery(@RequestBody LabOrderSearchQuery query) throws Exception {
         Sort sort = Sort.by(Sort.Direction.DESC,"id");
         Pageable pageable = PageRequest.of(query.getPageNumber(), Constants.PAGE_SIZE, sort);
@@ -314,6 +336,7 @@ public class ExaminationController {
     }
 
     @GetMapping("/labOrder/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN','EXAMINER','MEDICAL','NURSE')")
     public LabOrderDTO list(@PathVariable("id")Long id){
         LabOrder labOrder =labService.get(id);
         if(labOrder==null)
@@ -326,8 +349,8 @@ public class ExaminationController {
         return LabOrderDTO.toDetailDTO(labOrder,staffService.get(labOrder.getTechnician()));
     }
     @PostMapping("/labOrder/addResult")
+    @PreAuthorize("hasAnyAuthority('ADMIN','EXAMINER','MEDICAL','NURSE')")
     @Transactional
-
     public  LabOrderDTO  updateLabOrder(@RequestBody LabOrderDTO dto) throws Exception {
         LabOrder labOrder =labService.get(dto.getId());
 
@@ -350,8 +373,98 @@ public class ExaminationController {
         return null;
 
     }
+    @PostMapping("/labOrder/uploadImage/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN','EXAMINER','MEDICAL','NURSE')")
+    public ActionResponse<LabOrderResultImageDTO> uploadLabImage(@RequestParam("image") MultipartFile multipartFile, @PathVariable("id")Long id) throws Exception {
+        ActionResponse<LabOrderResultImageDTO> response =new ActionResponse<>();
+
+        Staff  staff =staffService.getByStaffId(securityService.getStaffId());
+        if(staff==null) {
+            return null;
+        }
+        if(multipartFile==null) {
+            response.setResult(false);
+            response.setMessage("Sorry,empty image value");
+            return response;
+        }
+        LabOrder labOrder =labService.get(id);
+        if(labOrder==null){
+            response.setResult(false);
+            response.setMessage("Sorry,Unknown Laboratory Order");
+            return response;
+        }
+        LabOrderResultImage resultImage = new LabOrderResultImage();
+        resultImage.setLabOrder(labOrder);
+        resultImage.setStaff(staff);
+
+        LabOrderResultImage addedResultImage =labOrderImageService.add(resultImage);
+        if(addedResultImage==null || addedResultImage.getId()==null){
+            response.setMessage("Unexpected DB error, unable to save the process");
+            response.setResult(false);
+            return response;
+        }
+
+                String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
+                long maxSize = 12;
+                Long size = multipartFile.getSize();
+                size = size / 1023 / 2023;
+                if (size > maxSize) {
+                    response.setResult(false);
+                    response.setMessage("Sorry,Very large file size");
+                    return response;
+                }
+        try {
+            File file = documentService.uploadLabResultPhoto(labOrder, addedResultImage.getId(), multipartFile);
+            response.setResult(true);
+            response.setT(LabOrderResultImageDTO.toDTO(addedResultImage));
+            response.setMessage("Successfully uploaded");
+            return response;
+        }catch(Exception e){
+            response.setResult(false);
+            response.setMessage("Sorry,unexpected file exception error=>"+e.getMessage());
+            return response;
+        }
 
 
+    }
+
+    @GetMapping("/labOrder/resultImages/{id}")
+    public List<LabOrderResultImageDTO> getResultImages(@PathVariable("id")Long id){
+        LabOrder labOrder =labService.get(id);
+        if(labOrder==null)return null;
+
+        List<LabOrderResultImage> images =labOrderImageService.findByLabOrder(labOrder);
+
+        if(images==null || images.size()==0)return null;
+
+        return images.stream().map(l->LabOrderResultImageDTO.toDTO(l)).collect(Collectors.toList());
+    }
+    @GetMapping(value = "/labOrder/getImage/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
+    @PreAuthorize("hasAnyAuthority('ADMIN','EXAMINER','MEDICAL','NURSE')")
+    public ResponseEntity<Resource> getLabOrderResultPhoto(@PathVariable("id")Long id) throws IOException {
+
+       LabOrderResultImage labOrderImage = labOrderImageService.get(id);
+       if(labOrderImage==null) return null;
+
+
+        ByteArrayResource img =documentService.getLabResultPhoto(labOrderImage);
+        if(img==null)
+            return null;
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .contentLength(img.contentLength())
+                .body(img);
+    }
+    @GetMapping("/labOrder/resultImageObject/{id}" )
+    @PreAuthorize("hasAnyAuthority('ADMIN','EXAMINER','MEDICAL','NURSE')")
+    public LabOrderResultImageDTO getLabOrderResultImageObject(@PathVariable("id")Long id) throws IOException {
+        LabOrderResultImage image =labOrderImageService.get(id);
+        if(image==null) return null;
+
+        return LabOrderResultImageDTO.toDTO(image);
+
+    }
     //  Health Problem
 //    @PreAuthorize("hasAnyAuthority('ADMIN','EXAMINER')")
 //    @PostMapping("/healthProblem/add")

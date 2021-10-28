@@ -127,47 +127,7 @@ public class PatientVisitController {
         return  response;
     }
 
-    // due to unexpected and unsolved securitservice null problem, removed to this end point
-    @PreAuthorize("hasAnyAuthority('ADMIN','EXAMINER')")
-    @PostMapping("/addExamination")
-    private ActionResponse<ExaminationDTO> addExamination(@RequestBody ExaminationCreateDTO dto) throws IllegalAccessException{
-        String staffId =securityService.getStaffId();
 
-        Staff staff =staffService.getByStaffId(staffId);
-
-        ActionResponse<ExaminationDTO> response= new ActionResponse<>();
-        response.setResult(false);
-
-        if(staff==null){
-            throw new IllegalArgumentException("Unknown Staff");
-
-        }
-
-        PatientVisit visit =visitService.get(dto.getPatientVisitId());
-
-        if(visit==null){
-            response.setMessage("Unknown Checkups");
-        }
-        else {
-            Examination examination =ExaminationCreateDTO.toExamination(dto,visit,staff);
-            ActionResponse<Examination> result =examinationService.create(examination,dto.getLaboratoryCreates());
-
-            response.setMessage(result.getMessage());
-            response.setResult(result.getResult());
-
-            if(result.getResult()) {
-                List<LabOrderDTO> labOrders =labService.getByExamination((Examination)response.getT())
-                        .stream()
-                        .map(t->LabOrderDTO.toDTO(t,null)).collect(Collectors.toList());
-                if (result.getT() != null) {
-                    response.setT(ExaminationDTO.toDetail((Examination) result.getT(), labOrders));
-                }
-            }
-        }
-
-        return response;
-
-    }
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     @PostMapping("/delete/{id}")
      public ActionResponse<PatientVisitDTO> remove(@PathVariable("id") Long id) throws IllegalAccessException {
@@ -208,6 +168,7 @@ public class PatientVisitController {
                 .map(v->PatientVisitDTO.toPatientVisitDTO(v,departmentService.get(v.getDepartment()),staffService.get(v.getExaminer()),null));
 
     }
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     @PostMapping("/assign")
     public  PatientVisitDTO  assign(@RequestBody PatientVisitAssignmentCreate dto) throws IllegalAccessException {
         Department dept =new Department();
@@ -219,27 +180,26 @@ public class PatientVisitController {
 
          if(visit==null)
              return null;
+          if(!visit.getExamined()) {
+              if (dto.getCode().equals(VISIT_ASSIGNMENT_CODE.DEPARTMENT)) {
+                  // update assign department
+                  dept = departmentService.get(dto.getAssigneeId());
+                  if (dept == null)
+                      return null;
+                  visit = visitService.assignDepartment(visit.getId(), dto.getAssigneeId());
+              }
+              if (dto.getCode().equals(VISIT_ASSIGNMENT_CODE.EXAMINER)) {
+                  //update
+                  staff = staffService.get(dto.getAssigneeId());
 
-         if(dto.getCode().equals(VISIT_ASSIGNMENT_CODE.DEPARTMENT))
-         {
-             // update assign department
-             dept= departmentService.get(dto.getAssigneeId());
-             if(dept==null)
-                 return null;
-             visit=visitService.assignDepartment(visit.getId(),dto.getAssigneeId());
-         }
-         if(dto.getCode().equals(VISIT_ASSIGNMENT_CODE.EXAMINER)){
-             //update
-             staff =staffService.get(dto.getAssigneeId());
+                  if (staff == null)
+                      return null;
 
-             if(staff==null)
-                 return null;
-
-             visit=visitService.assignExaminer(visit.getId(),dto.getAssigneeId());
-         }
-
-        return PatientVisitDTO.toPatientVisitDTO(visit,dept,staff,
-                ExaminationDTO.toDTO(examinationService.getByPatientVisit(visit),null));
+                  visit = visitService.assignExaminer(visit.getId(), dto.getAssigneeId());
+              }
+          }
+                    return PatientVisitDTO.toPatientVisitDTO(visit,dept,staff,
+                            ExaminationDTO.toDTO(examinationService.getByPatientVisit(visit),null));
     }
 
 }

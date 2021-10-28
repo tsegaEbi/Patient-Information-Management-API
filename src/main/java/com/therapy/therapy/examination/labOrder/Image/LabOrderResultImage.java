@@ -2,6 +2,7 @@ package com.therapy.therapy.examination.labOrder.Image;
 
 import com.therapy.therapy.common.Model;
 import com.therapy.therapy.examination.labOrder.LabOrder;
+import com.therapy.therapy.staff.Staff;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,6 +19,9 @@ public class LabOrderResultImage extends Model {
     @ManyToOne
     @JoinColumn(name="laborder_id")
     private LabOrder labOrder;
-    private Long fileId;
+
+    @ManyToOne
+    @JoinColumn(name="staff_id")
+    private Staff staff;
 
 }

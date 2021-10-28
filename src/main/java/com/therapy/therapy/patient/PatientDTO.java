@@ -47,6 +47,8 @@ public class PatientDTO {
     private Date dateCreated;
     private List<PatientVisit> visits;
 
+     private int age;
+
     public static Patient patient(PatientDTO patient){
         if(patient==null)
             return null;
@@ -76,6 +78,7 @@ public class PatientDTO {
         dto.setPrefix(patient.getPrefix());
         dto.setRegions(patient.getRegions());
 
+        dto.setAge(patient.getAge());
         return dto;
     }
     public static PatientDTO patientDTO(Patient patient){
@@ -107,6 +110,7 @@ public class PatientDTO {
         dto.setRegions(patient.getRegions());
 
         dto.setDateCreated(patient.getDateCreated());
+        dto.setAge(patient.getAge());
 
         return dto;
     }
@@ -181,7 +185,9 @@ public class PatientDTO {
         if(dto.getEmergencyContactMobile()!=null){
             patient.setEmergencyContactMobile(dto.getEmergencyContactMobile());
         }
-
+        if(dto.getAge()>0){
+            patient.setAge(dto.getAge());
+        }
         return patient;
     }
 }
