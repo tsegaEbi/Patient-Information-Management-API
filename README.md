@@ -23,6 +23,7 @@ Security management,
 
 Departments and staff management,
 Lab Result images upload, 
+Appointment management
 
 
 
