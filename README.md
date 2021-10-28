@@ -1,5 +1,6 @@
 # Patient Record managmenet API  
  Features
+ 
 Patient Information Recording,
 
 Vital Signs and Checkup information recording,
@@ -21,6 +22,8 @@ Patient medical chart reporting,
 Security management,
 
 Departments and staff management,
+Lab Result images upload, 
+
 
 
 Resources
