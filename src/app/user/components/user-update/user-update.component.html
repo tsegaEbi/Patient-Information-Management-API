@@ -1,22 +1,22 @@
-
+ 
 <hr/>
 <div class="container">
     <div class="row">
         <div class="col-md-12">
-           
+            
             <div class="alert-success">{{success}}</div>
             <div class="alert-danger">{{error}}</div>
             <div class="card">
-                <div class="card-title">
-                    <h4>Create new Asferno User</h4>
-                </div>
                 <div class="card-body">
-                    <form [formGroup]="formUser" >
+                    <div class="card-title">
+                        <h3>Edit User Information</h3>
+                    </div>
+                    <form [formGroup]="formEdit" >
                         <table class="table-md">
                             <tr>
                                 <td>
                                     <label for="name">Name: </label>
-                                    <input id="name" type="text" formControlName="name" class="form-control">
+                                    <input id="name" type="text" formControlName="name" class="form-control" >
                                     <div *ngIf="name.invalid && (name.dirty || name.touched)"
                                     class="alert alert-danger">
                                 
@@ -108,8 +108,8 @@
                            </form>
                 </div>
                 <div class="card-footer">
-                    <button type="submit" class="btn-primary btn" (click)="submit()">Create</button>
-                    <a  class="btn btn-secondary float-right"    routerLink="/user">Back</a>
+                    <button type="submit" class="btn-primary btn" (click)="submit()">Update</button>
+                    <a  class="btn btn-warning float-right"    routerLink="/user/{{user.id}}">Cancel</a>
                 </div>
             </div>
 

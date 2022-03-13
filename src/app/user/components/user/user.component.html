@@ -10,12 +10,12 @@
         </ng-container>
         
         <ng-template #usersListFound>
-          <div>
+          <div class="card">
               <table class="table">
                   <thead>
                       <tr> 
                       <th>S.N</th>
-                       <th>Name</th>
+                      <th>Name</th>
                       <th>Surname</th>
                       <th>Phone</th>
                       <th>Email</th>
@@ -27,7 +27,7 @@
                    <tbody>
                      <tr *ngFor="let user  of users; let i=index;">
                       <td> <a   [routerLink]="['/user',user.id]"> {{i+1}}</a></td>
-                      <td><a    [routerLink]="['/user',user.id]"></a>{{user.name}} </td>
+                       <td><a    [routerLink]="['/user',user.id]">{{user.name}}</a></td>
                       <td><a    [routerLink]="['/user',user.id]">{{user.surname}}</a></td>
                       <td><a    [routerLink]="['/user',user.id]">{{user.phone}}</a></td>
                       <td><a    [routerLink]="['/user',user.id]">{{user.email}}</a></td>

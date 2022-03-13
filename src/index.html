@@ -6,7 +6,41 @@
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico"> 
+  <style>
+    label{
+    font-weight: bold;
+    color:green
+}
+.card {
+  background-color: bisque;
+  margin:5px;
+  padding:5px;
+}
+.card-title{
+  padding:10px;
+  color:green;
+}
+  </style>
 </head>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Users</a>
+    
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="/users">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/create">Create</a>
+        </li>
+       
+      </ul>
+    </div>
+  </div>
+</nav>
 <body>
   <app-root></app-root>
 </body>

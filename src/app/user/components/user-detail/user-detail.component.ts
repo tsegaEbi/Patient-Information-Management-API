@@ -10,7 +10,7 @@ import { UserService } from '../../services/user.service';
   styleUrls: ['./user-detail.component.css']
 })
 export class UserDetailComponent implements OnInit {
-  searchVal:any;
+   searchVal:any;
    user:User;
    id:any;
    
@@ -48,10 +48,14 @@ success="";
   delete(){
     this.error="";
     this.success=""
-    this.userService.delete(this.id).subscribe((response)=>{
+    this.userService.delete(this.id).subscribe(
+      (response)=>{
         
-      this.success="User Deleted Successfully"; 
-   } 
+      this.success=response; 
+   } ,
+   (error)=>{
+     this.error=error.message;
+   }
    );
   }
 

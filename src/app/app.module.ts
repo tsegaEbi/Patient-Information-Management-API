@@ -10,14 +10,16 @@ import { AsferroUserState } from './user/RxStore/UserState.state';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { UserCreateComponent } from './user/components/user-create/user-create.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { UserDetailComponent } from './user/components/user-detail/user-detail.component'; 
+import { UserDetailComponent } from './user/components/user-detail/user-detail.component';
+import { UserUpdateComponent } from './user/components/user-update/user-update.component'; 
 
 @NgModule({
   declarations: [
     AppComponent,
     UserComponent,
     UserCreateComponent,
-    UserDetailComponent 
+    UserDetailComponent,
+    UserUpdateComponent 
   ],
   imports: [
     BrowserModule,

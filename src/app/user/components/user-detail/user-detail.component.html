@@ -1,8 +1,8 @@
 <div class="container">
 <div class="row">
 
-        <div class="col-md-6 p-4 m-4">
-            <h4>User Details</h4>
+        <div class="col-md-12 p-4 m-4">
+           
             <div class="alert-success">{{success}}</div>
             <div class="alert-danger">{{error}}</div>
 
@@ -12,28 +12,30 @@
             </ng-container>
              
             <ng-template #usersFound>
-                     <div class="card alert-success">
-                        
+                     <div class="card">
+                        <div class="card-title"> <h4>User Details</h4></div>
                         <div class="card-body">
                                 <label>Id</label>
                                 <p>{{user.id}}</p>
-                                <label>Name</label>
-                                <p class="p-2">{{user.name}}</p>
-                                <label>Surname</label>
-                                <p class="p-2">{{user.surname}}</p>
-                                <label>Email</label>
-                                <p class="p-2">{{user.email}}</p>
-                                <label>Phone</label>
-                                <p class="p-2">{{user.phone}}</p>
+                                <label>Full Name</label>
+                                <p class="p-2">{{user.name}}&nbsp;&nbsp;{{user.surname}}</p>
+                                 
+                                <label>Address</label>
+                                <p class="p-2"><strong>Email:</strong>&nbsp;{{user.email}}&nbsp;<strong>Phone:</strong>s&nbsp;{{user.phone}}</p>
+                                 
                                 <label>Date of Birth</label>
                                 <p class="p-2">{{user.dob}}</p>
-                                <label>Created Date</label>
-                                <p class="p-2">{{user.dob}}</p>
-                                <label>Updated Date</label>
-                                <p class="p-2">{{user.dob}}</p>
-                                <hr/>
-                                <button class="btn btn-warning" (click)="delete()">Delete</button>
+                                <label>Creation and last Updated Date</label>
+                                <p class="p-2"><strong>Date Created:</strong>&nbsp;{{user.dateCreated}},&nbsp;<strong>Last Updated:</strong>&nbsp;{{user.dateUpdated}}</p>
+                                 
                                 
+                         </div>
+                         <div class="card-footer">
+                            <a  class="btn btn-primary m-4"    routerLink="/edit/{{user.id}}">Edit</a>
+                              
+                            <a  class="btn btn-secondary m-4"    routerLink="/user">Back</a>
+                           
+                            <button class="btn btn-warning float-right" (click)="delete()">Delete</button>
                          </div>
                      </div>
 
@@ -41,52 +43,10 @@
 
             <ng-template #noUserFound>
 
-
+                    <div class="alert-danger">User Not Found</div>
             </ng-template>
         </div>
-        <div class="col-md-6 p-4 m-4">
-            <h4>User Details</h4>
-            <div class="alert-success">{{success}}</div>
-            <div class="alert-danger">{{error}}</div>
-
-            <ng-container
-            *ngIf="user!==undefined then usersFound; else noUserFound">
-            
-            </ng-container>
-             
-            <ng-template #usersFound>
-                     <div class="card alert-success">
-                        
-                        <div class="card-body">
-                                <label>Id</label>
-                                <p>{{user.id}}</p>
-                                <label>Name</label>
-                                <p class="p-2">{{user.name}}</p>
-                                <label>Surname</label>
-                                <p class="p-2">{{user.surname}}</p>
-                                <label>Email</label>
-                                <p class="p-2">{{user.email}}</p>
-                                <label>Phone</label>
-                                <p class="p-2">{{user.phone}}</p>
-                                <label>Date of Birth</label>
-                                <p class="p-2">{{user.dob}}</p>
-                                <label>Created Date</label>
-                                <p class="p-2">{{user.dob}}</p>
-                                <label>Updated Date</label>
-                                <p class="p-2">{{user.dob}}</p>
-                                <hr/>
-                                <button class="btn btn-warning" (click)="delete()">Delete</button>
-                                
-                         </div>
-                     </div>
-
-            </ng-template>
-
-            <ng-template #noUserFound>
-
-
-            </ng-template>
-        </div>
+         
 </div>
  
 </div>

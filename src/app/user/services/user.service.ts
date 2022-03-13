@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpClientModule, HttpErrorResponse, HttpResponse, HttpStatusCode } from  '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import {   User, UserCreate } from '../models/models'; 
+import {   User, UserCreate, UserUpdate } from '../models/models'; 
 import { USER_URL } from '../shared/config';
 
 @Injectable({
@@ -37,7 +37,7 @@ export class UserService {
     return this.httpClient.delete<any>(this.url+"/delete/"+id);
 
   }
-  public update(user:User):Observable<any>{
+  public update(user:UserUpdate):Observable<any>{
 
     return this.httpClient.put<any>(this.url+"/update",user);
 
