@@ -1,0 +1,113 @@
+
+<hr/>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h3>Create new Asferno User</h3>
+            <div class="alert-success">{{success}}</div>
+            <div class="alert-danger">{{error}}</div>
+<form [formGroup]="formUser" >
+<table class="table-md">
+    <tr>
+        <td>
+            <label for="name">Name: </label>
+            <input id="name" type="text" formControlName="name" class="form-control">
+            <div *ngIf="name.invalid && (name.dirty || name.touched)"
+            class="alert alert-danger">
+        
+                    <div *ngIf="name.errors?.['required']">
+                        Name is required.
+                    </div>
+                    <div *ngIf="name.errors?.['minlength']">
+                        Name must be at least 1 characters long.
+                    </div>
+                    <div *ngIf="name.errors?.['maxlength']">
+                        Name must be less than 60 charactrs.
+                    </div>
+           </div>
+        </td>
+        </tr>
+        <tr>
+        <td>
+            <label for="surname">Surame: </label>
+            <input id="surname" type="text" formControlName="surname" class="form-control">
+            <div *ngIf="surname.invalid && (surname.dirty || surname.touched)"
+            class="alert alert-danger">
+        
+                    <div *ngIf="surname.errors?.['required']">
+                        Surame is required.
+                    </div>
+                    <div *ngIf="surname.errors?.['minlength']">
+                        Surame must be at least 1 characters long.
+                    </div>
+                    <div *ngIf="surname.errors?.['maxlength']">
+                        Surame must be less than 60 charactrs.
+                    </div>
+           </div>
+        </td>
+
+    </tr>
+    <tr>
+        <td>
+            <label for="email">Email: </label>
+            <input id="email" type="text" formControlName="email" class="form-control">
+            <div *ngIf="email.invalid && (email.dirty || email.touched)"
+            class="alert alert-danger">
+        
+                    <div *ngIf="email.errors?.['required']">
+                        Email is required.
+                    </div>
+                     
+                    <div *ngIf="email.errors?.['pattern']">
+                        Invalid email format.
+                    </div>
+           </div>
+        </td>
+        </tr>
+        <tr>
+        <td>
+            <label for="phone">Phone: </label>
+            <input id="phone" type="text" formControlName="phone" class="form-control">
+            <div *ngIf="phone.invalid && (phone.dirty || phone.touched)"
+            class="alert alert-danger">
+        
+                    <div *ngIf="phone.errors?.['required']">
+                        Phone is required.
+                    </div>
+                     
+                    <div *ngIf="phone.errors?.['pattern']">
+                        Phone  format must be 0yyyxxxxxx.
+                    </div>
+           </div>
+        </td>
+
+    </tr>
+    <tr>
+        <td>
+            <label for="dob">DOB: </label>
+            <input id="dob" type="date" formControlName="dob" class="form-control">
+            <div *ngIf="dob.invalid && (dob.dirty || dob.touched)"
+            class="alert alert-danger">
+        
+                    <div *ngIf="dob.errors?.['required']">
+                        Date Of Birth is required.
+                    </div>
+                     
+                    
+           </div>
+        </td>
+
+    </tr>
+    <tr>
+        <td>
+            <button type="submit" class="btn-primary btn" (click)="submit()">Create</button>
+        </td>
+    </tr>
+</table>
+   </form>
+   </div>
+   </div>
+   </div>
+     
+  
+   

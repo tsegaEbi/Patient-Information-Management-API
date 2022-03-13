@@ -17,6 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            
             "outputPath": "dist/asfernoFE",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -27,9 +28,12 @@
               "src/assets"
             ],
             "styles": [
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "src/styles.css"
             ],
-            "scripts": []
+            "scripts": [
+               "node_modules/bootstrap/dist/js/bootstrap.js"
+            ]
           },
           "configurations": {
             "production": {
@@ -68,10 +72,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "asfernoFE:build:production"
+              "browserTarget": "asfernoFE:build:production" 
             },
             "development": {
-              "browserTarget": "asfernoFE:build:development"
+              "browserTarget": "asfernoFE:build:development" 
             }
           },
           "defaultConfiguration": "development"

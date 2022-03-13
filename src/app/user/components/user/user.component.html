@@ -1,0 +1,52 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <h2>Asferro Users</h2>
+      <p> Number of Users: {{users.length}}</p>
+      <h3> Users List</h3>
+       <ng-container
+        *ngIf="users.length>0 then usersListFound; else noUsersListFound">
+        
+        </ng-container>
+        
+        <ng-template #usersListFound>
+          <div>
+              <table class="table">
+                  <thead>
+                      <tr> 
+                      <th>S.N</th>
+                       <th>Name</th>
+                      <th>Surname</th>
+                      <th>Phone</th>
+                      <th>Email</th>
+                      <th>Date of Birth Date</th>
+                      <th>Created Date</th>
+                      <th>Updated Date</th>
+                      </tr>
+                  </thead>
+                   <tbody>
+                     <tr *ngFor="let user  of users; let i=index;">
+                      <td> <a   [routerLink]="['/user',user.id]"> {{i+1}}</a></td>
+                      <td><a    [routerLink]="['/user',user.id]"></a>{{user.name}} </td>
+                      <td><a    [routerLink]="['/user',user.id]">{{user.surname}}</a></td>
+                      <td><a    [routerLink]="['/user',user.id]">{{user.phone}}</a></td>
+                      <td><a    [routerLink]="['/user',user.id]">{{user.email}}</a></td>
+                      <td><a   [routerLink]="['/user',user.id]">{{user.dob }} </a></td>
+                      <td><a   [routerLink]="['/user',user.id]">{{user.dateCreated}}</a></td>  
+                      <td><a   [routerLink]="['/user',user.id]">{{user.dateUpdated}}</a></td>  
+                      </tr> 
+                   </tbody>
+              </table>
+          </div>
+        </ng-template>
+        <ng-template #noUsersListFound>
+          <div>
+             <h3>Sorry, no users list is found</h3>
+          </div>
+        </ng-template>
+    </div>
+  </div>
+</div>
+
+
+ 
